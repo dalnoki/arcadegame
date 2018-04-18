@@ -1,43 +1,47 @@
-// Enemies our player must avoid
-class Enemy {
-    constructor(x, y, speed) {
-        // Variables applied to each of our instances go here,
-        // we've provided one for you to get started
-        // The image/sprite for our enemies, this uses
-        // a helper we've provided to easily load images
-        this.sprite = 'images/enemy-bug.png';
+"use strict";
+
+class GameEntity {
+    constructor(sprite,x,y) {
+        this.sprite = sprite;
         this.x = x;
         this.y = y;
-        this.speed = speed;
-        this.xUpdated = 1;
+    }
+    render() {
+        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    }
+}
+
+
+// Enemies our player must avoid
+class Enemy extends GameEntity {
+    constructor(sprite,x,y,speed) {
+        super(sprite,x,y);
+            this.speed = speed;
     }
     // Update the enemy's position, required method for game
     // Parameter: dt, a time delta between ticks
     // calls the player's detectCollision method to check if the enemy have collided with the player or not
     update(dt) {
-        if (this.x >= 505) this.x = 0;
-        this.xUpdated = (this.x += this.speed);
-        this.xUpdated = this.xUpdated * dt;
-        player.detectCollision(this.x, this.y);
-        return this.xUpdated;
+        if (this.x >= 505) {
+            this.x = 0;
+        }
+        this.x = this.x + dt * this.speed;
+        
     }
-    // Draw the enemy on the screen, required method for game
-    render() {
-        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+
+    checkCollision() {
+        return player.detectCollision(this.x, this.y);
+
     }
 }
 // this Player class has a render method that draws the player to the screen, a handleinput method
 // that handles movement with the help of the event listener defined below and the above mentioned detectCollision
-class Player {
-    constructor() {
-        this.sprite = 'images/char-boy.png';
-        this.x = 200;
-        this.y = 400;
-    }
-    render() {
-        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-    }
+class Player extends GameEntity {
     handleInput(key) {
+        enemy1.checkCollision();
+        enemy2.checkCollision();
+        enemy3.checkCollision();
+        player.update();
         switch (key) {
             case 'up':
                 this.y -= 20;
@@ -84,15 +88,7 @@ class Player {
     }
 }
 // this class draws and handles the blow up effect that happens when player and enemy collides
-class Explosion {
-    constructor(x, y) {
-        this.sprite = 'images/bang.png';
-        this.x = x;
-        this.y = y;
-    }
-    render(playerX, playerY) {
-        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-    }
+class Explosion extends GameEntity{
     update(dt, x, y) {
         this.dt = dt;
         dt = 1;
@@ -107,11 +103,11 @@ class Explosion {
 // Objects are instantiated here
 // Enemies are put in the array for the method in engine.js
 
-const player = new Player;
-const enemy1 = new Enemy(0, 50, Math.floor((Math.random() * 6) + 1));
-const enemy2 = new Enemy(0, 150, Math.floor((Math.random() * 6) + 1));
-const enemy3 = new Enemy(0, 230, Math.floor((Math.random() * 6) + 1));
-const bigBang = new Explosion(600, 600);
+const player = new Player('images/char-boy.png',200,400);
+const enemy1 = new Enemy('images/enemy-bug.png',0, 50, Math.floor((Math.random() * 600) + 1));
+const enemy2 = new Enemy('images/enemy-bug.png',0, 150, Math.floor((Math.random() * 600) + 1));
+const enemy3 = new Enemy('images/enemy-bug.png',0, 230, Math.floor((Math.random() * 600) + 1));
+const bigBang = new Explosion('images/bang.png',600, 600);
 const allEnemies = [enemy1, enemy2, enemy3]
 // This listens for key presses and sends the keys to the
 // Player.handleInput() method.
