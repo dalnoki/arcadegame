@@ -26,7 +26,7 @@ class Enemy extends GameEntity {
             this.x = 0;
         }
         this.x = this.x + dt * this.speed;
-        
+        player.detectCollision(this.x,this.y);
     }
 
     checkCollision() {
@@ -60,10 +60,10 @@ class Player extends GameEntity {
     detectCollision(enemyX, enemyY) {
         this.enemyX = enemyX;
         this.enemyY = enemyY
-        let xMinus = enemyX - 30;
-        let xPlus = enemyX + 30
-        let yMinus = enemyY - 30;
-        let yPlus = enemyY + 30
+        let xMinus = enemyX - 40;
+        let xPlus = enemyX + 40
+        let yMinus = enemyY - 40;
+        let yPlus = enemyY + 40
         if ((this.x > xMinus && this.x < xPlus) && (this.y > yMinus && this.y < yPlus)) {
             bigBang.update(0, this.x, this.y);
             this.x = 200;
